@@ -45,15 +45,27 @@ class MusicListActivity : AppCompatActivity() {
         binding.recyclerViewMusic.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewMusic.adapter = adapter
 
-        // Check and request permissions
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.READ_MEDIA_AUDIO),
-                PERMISSION_REQUEST_CODE)
+        // Check and request appropriate permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_MEDIA_AUDIO),
+                    PERMISSION_REQUEST_CODE)
+            } else {
+                loadMusicFiles()
+            }
         } else {
-            loadMusicFiles()
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE)
+            } else {
+                loadMusicFiles()
+            }
         }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
